@@ -1,4 +1,4 @@
-public class BloomFilters{
+public class BloomFilters {
 
     //************************************** */
     /* GLOBALS */
