@@ -6,79 +6,86 @@ import java.util.*;
 //************************************** */
 public class BloomFilters {
     //************************************** */
-    /* GLOBALS */
+    /* FIELDS */
     //************************************** */
-    private static int[] A; //the bit Array
-    private static int n; // size of bit array
-    // private static {hash functions} h;
-    // Instead of a list, should we make each hash function its own method?
-    private static int k; // number of hash functions
-    private static double[] fpRates;
-    //************************************** */
+    static int num_insertions = 1000;
+    static int insertion_range = 100000;
+    int[] A; //the bit Array
+    int k; // number of hash functions
+    int size; // size of the bit array
+    HashSet actual; //Set of elements actually added to filter
 
+    public BloomFilters(int num, int s){
+        k = num;
+        A = new int[s];
+        size = s;
+        actual = new HashSet();
+    }
+    //************************************** */
 
     public static void main(String[] args){
-        int x = 1; // set this equal to the number of trials we want to run
-        fpRates = new double[x];
-        double rate = 1.0;
-        int[] arraySizes = new int[x];
-        
-        // Fill an array with different number of bitArray sizes
-        // Also can make array of number of hash functions in this loop
-        for(int i = 0; i < x; i++){
-            arraySizes[i] = 10000 * (i+1);
-        }
-        // run trials
-        for(int j = 0; j < x; j++){ // call trial() in here (also put something between parenthesis)
-            n = arraySizes[j];
-            A = new int[n];
-            // h = new {hash functions}[k]; idk how we want to do this part
-            A = init(A);
-            rate = trial(1); // change trial input, need to pass itemset to check
-            fpRates[j] = rate;
-        }
 
+        int k = Integer.parseInt(args[0]); // Number of hash functions
+        int size = Integer.parseInt(args[1]); // Size of the bit array
+        
+        BloomFilters filter = new BloomFilters(k, size);
+        Random rand = new Random();
+
+        for(int i=0; i<num_insertions; i++){
+            int x = rand.nextInt(insertion_range); 
+            filter.insert(x); //Insert random numbers between 0 and insertion_range
+        }
+        System.out.println(filter.fpRate(1000));
     }
 
-    public static int[] initArray(int[] a){
-        // Initialize array a
-        // Need hash functions to do this part
+    public void insert(int n){
 
-        /*
-        for i = 1...k
-            set a[hi(x)] = 1
-        */
+        actual.add(n); // Add the inserted element to a hashset for false positive checking
 
-        return a;
+        Random rand = new Random(n); //Generate random generator with a seed of the number inserted
+        // for k hash functions, generate random numbers within the range of our "bit" array (acts as hash function)
+        for(int i=0; i<k; i++){
+            int index = rand.nextInt(size); 
+            A[index] = 1; //set bits to 1
+        }
     }
-    public static double trial(int rp){ // fill in more inputs--itemset to check
-        //rp is nummber of actual positives
-        int n = 0; // number of items we want to check
-        int pos = 0; // number of "returned" positives
+
+    public boolean lookup(int n){
+    
+        boolean toReturn = true;
+        Random rand = new Random(n); //Random generator with the same seed will return same sequence of numbers
         
-        for(int j = 0; j < n; j++){
-            String s = ""; // or int i = 0; depending on what we're hashing
-            if(lookup(s)){ // or lookup(i) if using ints ^^
-                pos++;
+        for(int i=0; i<k; i++){
+            int index = rand.nextInt(size); //Corresponds to the indices of the bit array that would
+            if(A[index]==0){                //be set if the element was inserted, based on number of hashes
+                toReturn = false; //If any of the bits are 0 the element was not added to the filter
             }
         }
-        int x = 1;//temporary- represents size of itemset
-        return ((pos-rp)/x); // number of "positives" -- I think this gives us fp rate?
+        return toReturn;
     }
-    public static boolean lookup(String s){
-     /*
-        for i = 1...k
-            if A[hi(x)] = 0
-                return false
-        return true
-        */   
-    }
-    public static boolean lookup(int i){
-     /*
-        for i = 1...k
-            if A[hi(x)] = 0
-                return false
-        return true
-        */   
+
+    public double fpRate(int num){
+
+        int total_negatives = 0; //False positives + true negatives
+        int fp = 0; //false positives
+
+        Random rand = new Random();
+
+        for(int i=0; i<num; i++){
+            int trial = insertion_range + rand.nextInt(insertion_range); //Randomly generate ints that were not inserted
+            if(!actual.contains(trial)){ // If the trial element was not inserted
+                total_negatives++;
+                if(lookup(trial)){ //If the filter says that the element is in the set
+                    fp++;
+                }
+            }
+        }
+        return (double)fp/(double)total_negatives; //False positive rate
     }
 }
+
+
+
+
+
+
