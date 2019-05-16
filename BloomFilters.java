@@ -155,9 +155,3 @@ public class BloomFilters {
         System.out.println(filter.fpRate(100000));
     }
 }
-
-
-
-
-
-
