@@ -14,7 +14,7 @@ import java.util.Random;
 */
 public class BloomFilters {
     /** Number of insertions to perform */
-    static int num_insertions = 1000;
+    static int num_insertions = 10000;
     
     /** Range for numbers to be inserted */
     static int insertion_range = 100000;
@@ -152,7 +152,7 @@ public class BloomFilters {
             //Insert element
             filter.insert(x); 
         }
-        System.out.println(filter.fpRate(1000));
+        System.out.println(filter.fpRate(100000));
     }
 }
 
