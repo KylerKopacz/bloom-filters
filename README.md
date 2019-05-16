@@ -1,3 +1,8 @@
+# Bloom Filter Simulation
+## By Dylan Finazzo, Kyler Kopacz, and Jack Fergus
+
+An exploration of Bloom Filters and their effectiveness, written in Java (and a little bit of shell).
+
 Assuming that you are using bash, run the code by typing:
 ```
 ./run.sh
