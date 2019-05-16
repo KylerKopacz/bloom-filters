@@ -4,7 +4,9 @@
 * @author Kyler Kopacz
 * @author Jack Fergus
 */
-import java.util.*;
+
+import java.util.HashSet;
+import java.util.Random;
 
 /**
 * Object Representation of a Bloom Filter.
