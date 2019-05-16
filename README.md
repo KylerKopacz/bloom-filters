@@ -2,7 +2,7 @@ Assuming that you are using bash, run the code by typing:
 ```
 ./run.sh
 ```
-This will run the experiment multiple times with out parameters. Outputs representing false positive rate for each iteration into the "./output/" directory. 
+This will run the experiment multiple times with our parameters. Outputs representing false positive rate for each iteration into the "./output/" directory. 
 
 To run one iteration with your own arguments, type:
 ```
